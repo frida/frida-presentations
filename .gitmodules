@@ -1,0 +1,6 @@
+[submodule "HES2013/demos/04-browser/ospy"]
+	path = HES2013/demos/04-browser/ospy
+	url = git://github.com/frida/ospy.git
+[submodule "HES2013/demos/04-browser/aurora"]
+	path = HES2013/demos/04-browser/aurora
+	url = git://github.com/frida/aurora.git
