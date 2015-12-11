@@ -11,13 +11,13 @@ let blobs = [];
 
 ['recv', 'recv$NOCANCEL'].forEach(funcName => {
   Interceptor.attach(Module.findExportByName('libsystem_c.dylib', funcName), {
-    onEnter: args => {
+    onEnter(args) {
       if (state === STALKING && this.threadId === stalkedThreadId) {
         state = COLLECTING;
         Stalker.unfollow();
       }
     },
-    onLeave: retval => {
+    onLeave(retval) {
       if (state === WAITING) {
         state = STALKING;
         stalkedThreadId = this.threadId;
