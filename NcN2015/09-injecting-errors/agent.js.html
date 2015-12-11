@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>~/frida-presentations/ZeroNights2015/5-injecting-errors/agent.js.html</title>
+<meta name="Generator" content="Vim/7.4">
+<meta name="plugin-version" content="vim7.4_v1">
+<meta name="syntax" content="javascript">
+<meta name="settings" content="number_lines,use_css,no_foldcolumn,expand_tabs,line_ids,prevent_copy=">
+<meta name="colorscheme" content="desert">
+<style type="text/css">
+<!--
+pre { font-family: monospace; color: #ffffff; background-color: #333333; }
+body { font-family: monospace; color: #ffffff; background-color: #333333; }
+* { font-size: 1em; }
+.Type { color: #bdb76b; font-weight: bold; }
+.Statement { color: #f0e68c; font-weight: bold; }
+.LineNr { color: #ffff00; }
+.Constant { color: #ffa0a0; }
+.Identifier { color: #98fb98; }
+-->
+</style>
+
+<script type='text/javascript'>
+<!--
+
+/* function to open any folds containing a jumped-to line before jumping to it */
+function JumpToLine()
+{
+  var lineNum;
+  lineNum = window.location.hash;
+  lineNum = lineNum.substr(1); /* strip off '#' */
+
+  if (lineNum.indexOf('L') == -1) {
+    lineNum = 'L'+lineNum;
+  }
+  lineElem = document.getElementById(lineNum);
+  /* Always jump to new location even if the line was hidden inside a fold, or
+   * we corrected the raw number to a line ID.
+   */
+  if (lineElem) {
+    lineElem.scrollIntoView(true);
+  }
+  return true;
+}
+if ('onhashchange' in window) {
+  window.onhashchange = JumpToLine;
+}
+
+-->
+</script>
+</head>
+<body onload='JumpToLine();'>
+<pre id='vimCodeElement'>
+<span id="L1" class="LineNr"> 1 </span><span class="Constant">'use strict'</span>;
+<span id="L2" class="LineNr"> 2 </span>
+<span id="L3" class="LineNr"> 3 </span><span class="Type">const</span> AF_INET = <span class="Constant">2</span>;
+<span id="L4" class="LineNr"> 4 </span><span class="Type">const</span> AF_INET6 = <span class="Constant">30</span>;
+<span id="L5" class="LineNr"> 5 </span><span class="Type">const</span> ECONNREFUSED = <span class="Constant">61</span>;
+<span id="L6" class="LineNr"> 6 </span>
+<span id="L7" class="LineNr"> 7 </span>[<span class="Constant">'connect'</span>, <span class="Constant">'connect$NOCANCEL'</span>].forEach(funcName =&gt; {
+<span id="L8" class="LineNr"> 8 </span>  <span class="Type">const</span> connect = <span class="Statement">new</span> NativeFunction(
+<span id="L9" class="LineNr"> 9 </span>    Module.findExportByName(<span class="Constant">'libsystem_kernel.dylib'</span>, funcName),
+<span id="L10" class="LineNr">10 </span>    <span class="Constant">'int'</span>,
+<span id="L11" class="LineNr">11 </span>    [<span class="Constant">'int'</span>, <span class="Constant">'pointer'</span>, <span class="Constant">'int'</span>]);
+<span id="L12" class="LineNr">12 </span>  Interceptor.replace(connect, <span class="Statement">new</span> NativeCallback((socket, address, addressLen) =&gt; {
+<span id="L13" class="LineNr">13 </span>    <span class="Type">const</span> family = Memory.readU8(address.add(<span class="Constant">1</span>));
+<span id="L14" class="LineNr">14 </span>    <span class="Statement">if</span> (family == AF_INET || family == AF_INET6) {
+<span id="L15" class="LineNr">15 </span>      <span class="Type">const</span> port = (Memory.readU8(address.add(<span class="Constant">2</span>)) &lt;&lt; <span class="Constant">8</span>) | Memory.readU8(address.add(<span class="Constant">3</span>));
+<span id="L16" class="LineNr">16 </span>
+<span id="L17" class="LineNr">17 </span>      <span class="Statement">let</span> ip = <span class="Constant">''</span>;
+<span id="L18" class="LineNr">18 </span>      <span class="Statement">if</span> (family == AF_INET) {
+<span id="L19" class="LineNr">19 </span>        <span class="Statement">for</span> (<span class="Statement">let</span> offset = <span class="Constant">4</span>; offset != <span class="Constant">8</span>; offset++) {
+<span id="L20" class="LineNr">20 </span>          <span class="Statement">if</span> (ip.length &gt; <span class="Constant">0</span>)
+<span id="L21" class="LineNr">21 </span>            ip += <span class="Constant">'.'</span>;
+<span id="L22" class="LineNr">22 </span>          ip += Memory.readU8(address.add(offset));
+<span id="L23" class="LineNr">23 </span>        }
+<span id="L24" class="LineNr">24 </span>      } <span class="Statement">else</span> {
+<span id="L25" class="LineNr">25 </span>        <span class="Statement">for</span> (<span class="Statement">let</span> offset = <span class="Constant">8</span>; offset !== <span class="Constant">24</span>; offset += <span class="Constant">2</span>) {
+<span id="L26" class="LineNr">26 </span>          <span class="Statement">if</span> (ip.length &gt; <span class="Constant">0</span>)
+<span id="L27" class="LineNr">27 </span>            ip += <span class="Constant">':'</span>;
+<span id="L28" class="LineNr">28 </span>          ip += toHex(Memory.readU8(address.add(offset))) +
+<span id="L29" class="LineNr">29 </span>              toHex(Memory.readU8(address.add(offset + <span class="Constant">1</span>)));
+<span id="L30" class="LineNr">30 </span>        }
+<span id="L31" class="LineNr">31 </span>      }
+<span id="L32" class="LineNr">32 </span>
+<span id="L33" class="LineNr">33 </span>      console.log(<span class="Constant">'connect() family='</span> + family + <span class="Constant">' ip='</span> + ip + <span class="Constant">' port='</span> + port);
+<span id="L34" class="LineNr">34 </span>      <span class="Statement">if</span> (port === <span class="Constant">80</span> || port === <span class="Constant">443</span> || port === <span class="Constant">4070</span>) {
+<span id="L35" class="LineNr">35 </span>        console.log(<span class="Constant">'  blocking!'</span>);
+<span id="L36" class="LineNr">36 </span>        <span class="Type">this</span>.errno = ECONNREFUSED;
+<span id="L37" class="LineNr">37 </span>        <span class="Statement">return</span> -<span class="Constant">1</span>;
+<span id="L38" class="LineNr">38 </span>      } <span class="Statement">else</span> {
+<span id="L39" class="LineNr">39 </span>        console.log(<span class="Constant">'  accepting!'</span>);
+<span id="L40" class="LineNr">40 </span>        <span class="Statement">return</span> connect(socket, address, addressLen);
+<span id="L41" class="LineNr">41 </span>      }
+<span id="L42" class="LineNr">42 </span>    } <span class="Statement">else</span> {
+<span id="L43" class="LineNr">43 </span>      <span class="Statement">return</span> connect(socket, address, addressLen);
+<span id="L44" class="LineNr">44 </span>    }
+<span id="L45" class="LineNr">45 </span>  }, <span class="Constant">'int'</span>, [<span class="Constant">'int'</span>, <span class="Constant">'pointer'</span>, <span class="Constant">'int'</span>]));
+<span id="L46" class="LineNr">46 </span>
+<span id="L47" class="LineNr">47 </span>  send(<span class="Constant">'ready'</span>);
+<span id="L48" class="LineNr">48 </span>});
+<span id="L49" class="LineNr">49 </span>
+<span id="L50" class="LineNr">50 </span><span class="Identifier">function</span> toHex(v) {
+<span id="L51" class="LineNr">51 </span>  <span class="Statement">let</span> result = v.toString(<span class="Constant">16</span>);
+<span id="L52" class="LineNr">52 </span>  <span class="Statement">if</span> (result.length === <span class="Constant">1</span>)
+<span id="L53" class="LineNr">53 </span>    result = <span class="Constant">'0'</span> + result;
+<span id="L54" class="LineNr">54 </span>  <span class="Statement">return</span> result;
+<span id="L55" class="LineNr">55 </span>}
+</pre>
+</body>
+</html>
+<!-- vim: set foldmethod=manual : -->
