@@ -1,5 +1,3 @@
-'use strict';
-
 const AF_INET = 2;
 const AF_INET6 = 30;
 const ECONNREFUSED = 61;

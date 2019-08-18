@@ -1,5 +1,3 @@
-'use strict';
-
 var mnemonics = {};
 
 Process.enumerateThreadsSync().forEach(function (thread) {

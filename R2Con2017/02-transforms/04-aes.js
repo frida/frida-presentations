@@ -1,5 +1,3 @@
-'use strict';
-
 var locations = {};
 
 Process.enumerateThreadsSync().forEach(function (thread) {

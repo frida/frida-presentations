@@ -1,5 +1,3 @@
-'use strict';
-
 const WAITING = 1;
 const STALKING = 2;
 const COLLECTING = 3;

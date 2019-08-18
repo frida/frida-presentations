@@ -1,5 +1,3 @@
-'use strict';
-
 Module.enumerateExports('libcommonCrypto.dylib', {
   onMatch(e) {
     if (e.type === 'function') {

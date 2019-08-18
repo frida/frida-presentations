@@ -1,5 +1,3 @@
-'use strict';
-
 var appModules = new ModuleMap(isAppModule);
 var mnemonics = {};
 var lastSnapshot = {};

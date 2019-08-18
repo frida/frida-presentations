@@ -1,5 +1,3 @@
-'use strict';
-
 var QUEUE_CAPACITY = 1000000;
 
 var app = new ModuleMap(isAppModule);

@@ -1,5 +1,3 @@
-'use strict';
-
 Dalvik.perform(() => {
   const MainActivity = Dalvik.use(
       're.frida.helloworld.MainActivity');

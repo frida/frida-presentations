@@ -1,5 +1,3 @@
-'use strict';
-
 var NSAutoreleasePool = ObjC.classes.NSAutoreleasePool;
 var NSSpeechSynthesizer = ObjC.classes.NSSpeechSynthesizer;
 

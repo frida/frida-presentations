@@ -1,5 +1,3 @@
-'use strict';
-
 const LSApplicationWorkspace = ObjC.classes.LSApplicationWorkspace;
 
 const onProgress = new ObjC.Block({

@@ -1,5 +1,3 @@
-'use strict';
-
 send({
   user: {
     name: 'john.doe'

@@ -1,5 +1,3 @@
-'use strict';
-
 var mnemonics = {};
 
 var blocksSeen = 0;

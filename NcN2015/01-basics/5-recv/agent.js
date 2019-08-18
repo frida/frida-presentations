@@ -1,5 +1,3 @@
-'use strict';
-
 let i = 2;
 function handleMessage(message) {
   send(message.magic * i);

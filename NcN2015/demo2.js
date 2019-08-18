@@ -1,5 +1,3 @@
-'use strict';
-
 const NSSpeechSynthesizer = ObjC.classes.NSSpeechSynthesizer;
 
 const synth = NSSpeechSynthesizer.alloc().init();

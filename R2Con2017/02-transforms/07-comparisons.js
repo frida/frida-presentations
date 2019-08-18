@@ -1,5 +1,3 @@
-'use strict';
-
 var appModules = new ModuleMap(isAppModule);
 
 Process.enumerateThreadsSync().forEach(function (thread) {

@@ -1,5 +1,3 @@
-'use strict';
-
 var app = new ModuleMap(isAppModule);
 var blocks = {};
 var lastSnapshot = {};
